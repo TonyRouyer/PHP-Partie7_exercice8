@@ -26,7 +26,10 @@
     </head>
     <body>
         <?php 
-            if ( isset($_POST['civilite']) && isset($_POST['lastname']) && isset($_POST['firstname']) ) {
+            if ( isset($_POST['civilite']) && preg_match("/Mr|Mme/", $_POST['firstname']) &&
+                 isset($_POST['lastname']) && preg_match("/^[a-zA-Z]+[-\s]?[a-z]+$/", $_POST['firstname']) &&
+                 isset($_POST['firstname']) && preg_match("/^[a-zA-Z]+[-\s]?[a-z]+$/", $_POST['firstname'])
+                 ) {
                 $infosfichier = pathinfo($_FILES['sendFile']['name']);
                 $extension_upload = $infosfichier['extension'];
                 $extensions_autorisees = array('pdf');
@@ -35,8 +38,8 @@
                     <p><?= 'Vous avez envoyer ' . $_FILES['sendFile']['name'] . ' Il s\'agit d\'un fichier .' . $extension_upload ?></p>
                 <?php }else {?>
                     <p><?= 'Le fichier n\est pas au format pdf'?></p>
-                <?php }?>
-            <?php }else {?>
+                <?php }
+            }else {?>
                 <form action="index.php" method="POST" enctype="multipart/form-data">
                     <label for="civilite"> Civilité :
                     <select name="civilite" id="civilite">
