@@ -1,3 +1,4 @@
+<?php include 'indexController.php'; ?>
 <!DOCTYPE html>
 <html lang="fr" dir="ltr">
     <head>
@@ -25,32 +26,31 @@
         </style>
     </head>
     <body>
-        <?php 
-            if ( isset($_POST['civilite']) && preg_match("/Mr|Mme/", $_POST['firstname']) &&
-                 isset($_POST['lastname']) && preg_match("/^[a-zA-Z]+[-\s]?[a-z]+$/", $_POST['firstname']) &&
-                 isset($_POST['firstname']) && preg_match("/^[a-zA-Z]+[-\s]?[a-z]+$/", $_POST['firstname'])
-                 ) {
-                $infosfichier = pathinfo($_FILES['sendFile']['name']);
-                $extension_upload = $infosfichier['extension'];
-                $extensions_autorisees = array('pdf');
-                if (in_array($extension_upload, $extensions_autorisees)){?>
-                    <p><?= 'bonjour ' . htmlspecialchars($_POST['civilite']) . ' ' . htmlspecialchars($_POST['lastname']) . ' ' . htmlspecialchars($_POST['firstname']) .  ', vous aller bien ?' ?></p>
-                    <p><?= 'Vous avez envoyer ' . $_FILES['sendFile']['name'] . ' Il s\'agit d\'un fichier .' . $extension_upload ?></p>
-                <?php }else {?>
-                    <p><?= 'Le fichier n\est pas au format pdf'?></p>
-                <?php }
-            }else {?>
+    <?php 
+        //si le formulaire est validé et qu'il n y a pas d erreurs
+        if(isset($_REQUEST['filesForm']) && count($formError) == 0) { ?>
+            <p><?= 'bonjour ' . $civility . ' ' . $firstname . ' ' . $lastname ?></p>
+            <p><?= $sendFile ?></p></P>
+        <?php
+        }else { ?>
                 <form action="index.php" method="POST" enctype="multipart/form-data">
-                    <label for="civilite"> Civilité :
-                    <select name="civilite" id="civilite">
-                        <option value="Mr">Monsieur</option>
-                        <option value="Mme">Madame</option>
+                    <label for="civility"> Civilité :
+                    <select name="civility" id="civilite">
+                        <?php 
+                        foreach($civilityList as $civilityName => $civilityValue) { ?>
+                            <option <?= isset($_REQUEST['civility']) && $_REQUEST['civility'] == $civilityValue ? 'selected' : '' ?> value="<?= $civilityValue ?>"><?= $civilityName ?></option>
+                        <?php } ?>
                     </select>
                     </label>
+                    <p><?= isset($formError['civility']) ? $formError['civility'] : '' ?></p>
                     <label for="firstname">Prénom : <input type="text" id="firstname" name="firstname" /></label>
+                    <p><?= isset($formError['firstname']) ? $formError['firstname'] : '' ?></p>
                     <label for="lastname">Nom : <input type="text" id="lastname" name="lastname" /></label>
+                    <p><?= isset($formError['lastname']) ? $formError['lastname'] : '' ?></p>
                     <input type="file" name="sendFile" id="sendFile" />
-                    <input type="submit" id="sendBtn" />
-                </form><?php }?>
+                    <p><?= isset($formError['sendFile']) ? $formError['sendFile'] : '' ?></p>
+                    <input type="submit" id="sendBtn" name="filesForm" />
+                </form>
+        <?php  } ?>
     </body>
 </html>
